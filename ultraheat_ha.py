@@ -2,8 +2,8 @@
 # Script to read telegram from Landis&Gyr Ultraheat 2WR5 'Stadsverwarming'                       #
 # Might also work for Ultraheat UH50 (T550)                                                      #
 #                                                                                                #
-# This script sends the MJ and m3 values to Domoticz on the given IDX                            #
-# Add a custom sensor with MJ and m3 Y-axis settings (Add through dummy sensor hardware)         #
+# This script sends the MJ and m3 values to Home Assistant in JSON format                        #
+# Exact Home Assistant configuration to be given                                                 #
 #                                                                                                #
 # Source:                                                                                        #
 # Script from Magnat in https://gathering.tweakers.net/forum/list_messages/1535019               #
@@ -15,11 +15,7 @@ import serial
 import re
 import requests
 from time import sleep
-
-# domoticz URL like: http://192.168.38.110:8080
-domoticzUrl="http://192.168.38.110:8080"
-kjIDX=3788
-m3IDX=3789
+import json
 
 conn = serial.Serial('/dev/serial/by-id/usb-Silicon_Labs_CP2104_USB_to_UART_Bridge_Controller_010658AC-if00-port0',
                      baudrate=300,
@@ -58,20 +54,12 @@ try:
         # This will match on the first line of the telegram with GJ and m3 values.
         matchObj = re.match(r".+6\.8\(([0-9]{4}\.[0-9]{3})\*GJ\)6\.26\(([0-9]{5}\.[0-9]{2})\*m3\)9\.21\(([0-9]{8})\).+", line, re.I|re.S)
         if matchObj:
-            kjValue=round(float(matchObj.group(1)) * 1000)
+            mjValue=round(float(matchObj.group(1)) * 1000)
             m3Value=round(float(matchObj.group(2)) * 1000)
-            print("GJ : " + str(kjValue))
+            print("MJ : " + str(mjValue))
             print("m3: " + str(m3Value))
 
-            # Send kJ value to kJ IDX
-            url=domoticzUrl + "/json.htm?type=command&param=udevice&idx=" + str(kjIDX) + "&nvalue=0&svalue=" + str(kjValue)
-            print(url)
-            requests.get(url)
-
-            # Send m3 value to m3 IDX
-            url=domoticzUrl + "/json.htm?type=command&param=udevice&idx=" + str(m3IDX) + "&nvalue=0&svalue=" + str(m3Value)
-            print(url)
-            requests.get(url)
+            print(json.dumps({"MJ": mjValue, "m3": m3Value}))
         counter = counter + 1
 finally:
     conn.close()

@@ -27,6 +27,7 @@ an idea of the heat usage over a few parts of the day (every 6 hours).
 ## Requirements:
 - An optical probe (IEC 62056-21 standard) to place on the meter, for example: http://wiki.volkszaehler.org/hardware/controllers/ir-schreib-lesekopf-usb-ausgang
 - Python3
+- A home automation application like Domoticz of Home Assistant
 
 ## Source:
 Original script from Magnat in https://gathering.tweakers.net/forum/list_messages/1535019
