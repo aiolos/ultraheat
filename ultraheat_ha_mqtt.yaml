@@ -1,0 +1,19 @@
+## Ultraheat:
+- name: ultraheat_heat
+  unique_id: ultraheat_heat_mqtt_value
+  state_topic: "ultraheat/heat"
+  unit_of_measurement: "MJ"
+  value_template: "{{ value | round(0) }}"
+
+- name: ultraheat_volume
+  unique_id: ultraheat_volume_mqtt_value
+  state_topic: "ultraheat/volume"
+  unit_of_measurement: "l"
+  value_template: "{{ value | round(0) }}"
+
+- name: ultraheat_kwh
+  state_topic: "ultraheat/heat"
+  unit_of_measurement: "kWh"
+  value_template: "{{ (value | float / 3.6 ) | round(1) }}"
+  device_class: "energy"
+  state_class: "total_increasing"
